@@ -2,7 +2,7 @@ zookeeper:
   image: edpaget/zookeeper:3.4.6
   command: -c localhost:2888:3888 -i 1
 
-mesosLeader:
+mesosleader:
   image: garland/mesosphere-docker-mesos-master:latest
   ports:
     - "5050:5050"
@@ -13,16 +13,24 @@ mesosLeader:
     MESOS_LOG_DIR: /var/log/mesos
     MESOS_REGISTRY: in_memory
     MESOS_WORK_DIR: /var/lib/mesos
+  volumes:
+    - .:/hello-mesos
   links:
     - zookeeper
+    - mesosfollower
 
-mesosFollower:
+mesosfollower:
   image: garland/mesosphere-docker-mesos-master:latest
   entrypoint: mesos-slave
   environment:
     MESOS_LOGGING_LEVEL: INFO
     MESOS_LOG_DIR: /var/log/mesos
     MESOS_MASTER: zk://zookeeper:2181/mesos
+    MESOS_HOSTNAME: mesosfollower
+  volumes:
+    - .:/hello-mesos
+  ports:
+    - "5051:5051"
   links:
     - zookeeper
 
@@ -30,7 +38,10 @@ hellomesos:
   build: .
   links:
     - zookeeper
-  command: lein repl :headless :host 0.0.0.0 :port 4242
+    - mesosleader
+    - mesosfollower
+  entrypoint: lein 
+  command: repl :headless :host 0.0.0.0 :port 4242
   volumes:
     - .:/hello-mesos
   ports:

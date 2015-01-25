@@ -11,7 +11,8 @@
    [clojure.string :as str]
    [clojure.test :as test]
    [clojure.tools.namespace.repl :refer [refresh refresh-all]]
-   [hello-mesos]))
+   [com.stuartsierra.component :as component]
+   [hello-mesos.system :as sys]))
 
 (def system
   "A Var containing an object representing the application under
@@ -22,21 +23,18 @@
   "Creates and initializes the system under development in the Var
   #'system."
   []
-  ;; TODO
-  )
+  (alter-var-root #'system (constantly (sys/scheduler-system "mesosLeader:5050" 1))))
 
 (defn start
   "Starts the system running, updates the Var #'system."
   []
-  ;; TODO
-  )
+  (alter-var-root #'system component/start))
 
 (defn stop
   "Stops the system if it is currently running, updates the Var
   #'system."
   []
-  ;; TODO
-  )
+  (alter-var-root #'system component/stop))
 
 (defn go
   "Initializes and starts the system running."

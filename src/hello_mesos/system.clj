@@ -1,25 +1,27 @@
 (ns hello-mesos.system
   (:require [com.stuartsierra.component :as component]
-            [hello-mesos.component.mesos-master :refer [new-master]]
-            [hello-mesos.component.scheduler :refer [new-scheduler]]))
+            [hello-mesos.component.scheduler-driver :refer [new-scheduler-driver]]
+            [hello-mesos.component.executor-driver :refer [new-executor-driver]]
+            [hello-mesos.component.scheduler :refer [new-scheduler]]
+            [hello-mesos.scheduler :refer [scheduler]]
+            [hello-mesos.executor :refer [executor]]))
 
-(defn executor-crawl
-  [command id uri name]
-  {:executor-id }
-  )
-
-(defn execture-render)
-
-(defn system
-  [{:keys [master url]}
-   {:or {url "http://mesosphere.io"}}]
+(defn executor-system
+  []
   (component/system-map
-   :master (new-master master)
-   :scheduler (component/using
-               (new-scheduler )))
-  )
+   :driver (new-executor-driver (executor))))
+
+(defn scheduler-system
+  [master n-tasks]
+  (component/system-map
+   :scheduler (new-scheduler n-tasks)
+   :driver (component/using
+            (new-scheduler-driver master)
+            [:scheduler])))
 
 (defn -main
-  [master & [tasks & _]]
-  
-  )
+  [command-type & [master n-tasks & _]]
+  (let [system (condp = command-type
+                 "scheduler" (scheduler-system master n-tasks)
+                 "executor" (executor-system))]
+    (component/start system)))

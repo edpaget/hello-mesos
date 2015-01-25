@@ -4,7 +4,7 @@
   :license {:name "MIT"
             :url "https://github.com/edpaget/hello-mesos/LICENSE"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [clj-mesos "0.20.5"]
+                 [bdisraeli/clj-mesos "0.20.7-SNAPSHOT"]
                  [com.stuartsierra/component "0.2.2"]]
   :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.7"]]
                    :source-paths ["dev"]}
