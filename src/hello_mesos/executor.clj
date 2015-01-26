@@ -5,6 +5,11 @@
   []
   (mesos/executor
    (launchTask [driver task-info]
-               (println "HERE"))
-   (registered [driver slave-info]
+               (future (loop []
+                         (println "Hey Mesos!")
+                         (Thread/sleep 2000)
+                         (recur)))
+               (mesos/send-status-update driver {:task-id (:task-id task-info)
+                                                 :state :task-running}))
+   (registered [driver executor-info framework-info slave-info]
                (println slave-info))))

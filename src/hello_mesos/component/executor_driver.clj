@@ -5,11 +5,10 @@
 (defrecord ExecutorDriver [executor driver]
   component/Lifecycle
   (start [component]
-    (if driver
-      (mesos/start driver)
+    (when-not driver
       (let [driver (mesos/driver executor)]
-        (assoc component :driver driver)
-        (mesos/start driver))))
+        (mesos/start driver)
+        (assoc component :driver driver))))
   (stop [_]
     (when driver
       (mesos/stop driver))))

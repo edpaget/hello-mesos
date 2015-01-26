@@ -4,7 +4,8 @@
             [hello-mesos.component.executor-driver :refer [new-executor-driver]]
             [hello-mesos.component.scheduler :refer [new-scheduler]]
             [hello-mesos.scheduler :refer [scheduler]]
-            [hello-mesos.executor :refer [executor]]))
+            [hello-mesos.executor :refer [executor]])
+  (:gen-class))
 
 (defn executor-system
   []
@@ -24,4 +25,6 @@
   (let [system (condp = command-type
                  "scheduler" (scheduler-system master n-tasks)
                  "executor" (executor-system))]
-    (component/start system)))
+    (component/start system)
+    (while true
+      (Thread/sleep 1000000))))

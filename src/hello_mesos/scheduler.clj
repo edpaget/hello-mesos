@@ -8,8 +8,9 @@
     :slave-id slave-id
     :resources {:cpus 0.5
                 :mem 128.0}
-    :command {:shell true
-              :value "while true; do echo \"HEY\"; sleep 2; done; "}}])
+    :executor {:executor-id "hello-mesos-executor"
+               :command {:shell true
+                         :value "java -jar /hello-mesos/target/hello-mesos-0.1.0-SNAPSHOT-standalone.jar executor" }}}])
 
 (defn scheduler
   [scheduler-state]
@@ -25,6 +26,7 @@
                          (try
                            (mesos/launch-tasks driver (:id offer) (tasks-info uuid
                                                                               offer))
+                           (println (tasks-info uuid offer))
                            (swap! scheduler-state update-in [:to-launch] dec)
                            (catch Exception e
                              (.printStackTrace e)))))))))

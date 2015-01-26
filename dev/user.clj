@@ -11,8 +11,22 @@
    [clojure.string :as str]
    [clojure.test :as test]
    [clojure.tools.namespace.repl :refer [refresh refresh-all]]
+   [leiningen.core.project :as p]
+   [leiningen.uberjar :refer [uberjar]]
+   [clojure.java.io :as io]
    [com.stuartsierra.component :as component]
    [hello-mesos.system :as sys]))
+
+(defn load-project
+  []
+  (p/read (str (io/file (System/getProperty "user.dir") "./project.clj"))))
+
+(defn compile-uberjar
+  []
+  (let [project (load-project)]
+    (try (uberjar project 'hello-mesos.system)
+         (catch Exception e
+           (.printStackTrace e)))))
 
 (def system
   "A Var containing an object representing the application under
@@ -23,6 +37,7 @@
   "Creates and initializes the system under development in the Var
   #'system."
   []
+  (compile-uberjar)
   (alter-var-root #'system (constantly (sys/scheduler-system "mesosLeader:5050" 1))))
 
 (defn start
