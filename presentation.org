@@ -1,0 +1,53 @@
+#+TITLE: Using Apache Mesos with Clojure
+#+AUTHOR: Ed Paget
+
+Think of something catchy
+
+* Background
+
+* What's Mesos?
+** [[apache.mesos.org]]
+** Originally Written by Benjamin Hindman
+** Uses CGroups and Containers
+** Cluster Resouce Manager
+
+* clj-mesos
+** [[https://github.com/dgrnbrg/clj-mesos][dgrnbrg/clj-mesos]]
+** Production Ready
+** Slightly out of date with mainline Mesos
+
+* Some Other Tools for Development
+** [[https://docker.com][Docker]] and [[http://fig.sh/][Fig]]
+** or
+** [[https://github.com/mesosphere/playa-mesos][Vagrant]]
+
+* Let's Build a Framework
+
+* Scheduler
+** Manages resources of your framework
+** Lauches Tasks
+** Interact through [[http://mesos.apache.org/api/latest/java/org/apache/mesos/Scheduler.html][Callbacks]]
+* Executor
+**
+
+* Hello Mesos
+** Has a Scheduler, but no Executor
+** Just Prints "Hello Mesos"
+
+* Hello Mesos [Slight Return]
+** Has a Scheduler and a Executor
+
+* RENDLER
+** A Framework that does something
+** FrameworkMessages 
+*** Allows Executors and Schedulers to Communicate
+*** Only makes a best attempt at delivering the message
+
+* What else is there?
+** Use existing distributed applications
+*** [[https://github.com/mesos/storm][Storm]]
+*** [[https://github.com/jenkinsci/mesos-plugin][Jenkins]]
+*** [[https://github.com/mesosphere/cassandra-mesos][Cassandra]]
+*** [[http://spark.apache.org/docs/1.2.0/running-on-mesos.html][Spark]]
+*** [[https://github.com/mesos/hadoop][Hadoop]]
+
