@@ -8,8 +8,21 @@ Think of something catchy
 * What's Mesos?
 ** [[apache.mesos.org]]
 ** Originally Written by Benjamin Hindman
-** Uses CGroups and Containers
-** Cluster Resouce Manager
+** Cluster resouce manager
+** Uses CGroups and Containers to isolate tasks
+** Used by Twitter, Airbnb, Groupon, Apple, [[http://mesos.apache.org/documentation/latest/powered-by-mesos/][among a few]]
+
+#+CAPTION: The Logo
+[[./present-imgs/Apache-Mesos-logo.jpg]]
+* How does it work?
+** Based Around Frameworks
+** Implement a Scheduler and Executors 
+** Connect to Mesos with Drivers
+** Mesos track cluster usage and offers resources to Schedulers
+
+#+CAPTION: Credit to Digital Ocean
+[[./present-imgs/mesos_architecture.png]]
+
 
 * clj-mesos
 ** [[https://github.com/dgrnbrg/clj-mesos][dgrnbrg/clj-mesos]]
@@ -27,22 +40,82 @@ Think of something catchy
 ** Manages resources of your framework
 ** Lauches Tasks
 ** Interact through [[http://mesos.apache.org/api/latest/java/org/apache/mesos/Scheduler.html][Callbacks]]
+
+#+BEGIN_SRC clojure  
+  (clj-mesos.scheduler/scheduler
+    (disconnected [driver])
+    (error [driver message])
+    (executorLost [driver executor-id slave-id status])
+    (frameworkMessage [driver executor-id])
+    (offerRescinded [driver offer-id])
+    (registered [driver framework-id master-info])
+    (reregistered [driver master-info])
+    (resourceOffers [driver offers])
+    (slaveLost [driver slave-id])
+    (statusUpdate [driver status]))
+#+END_SRC
+
 * Executor
-**
+** Manages Executor of Tasks
+** Can be 'Corse-Grained' or 'Fine-Grained'
+** Like the Scheduler interact through [[http://mesos.apache.org/api/latest/java/][Callbacks]]
+
+#+BEGIN_SRC clojure
+  (clj-mesos.executor/executor
+   (disconnected [driver])
+   (error [driver message])
+   (frameworkMessage [driver data])
+   (killTask [driver task-id])
+   (launchTask [driver task-info])
+   (registered [driver executor-info framework-info slave-info])
+   (reregistered [driver slave-info])
+   (shutdown [driver]))
+#+END_SRC
 
 * Hello Mesos
 ** Has a Scheduler, but no Executor
 ** Just Prints "Hello Mesos"
 
+
+#+BEGIN_SRC clojure
+  (clj-mesos.scheduler/launch-tasks driver
+                                    [{:task-id 1
+                                      :name "Task"
+                                      :slave-id (:slave-id offer)
+                                      :resources {:cpus 1.0
+                                                  :mem 128.0}
+                                      :executor {}
+                                      :command {}}])
+#+END_SRC
+
 * Hello Mesos [Slight Return]
 ** Has a Scheduler and a Executor
+** Demonstrates a status update
 
-* RENDLER
+#+BEGIN_SRC clojure
+  (clj-mesos.executor/send-status-update driver
+                                         {:task-id (:task-id task-info)
+                                          :state :task-running})
+#+END_SRC
+
+* RENDLER!
+#+CAPTION: The Riddler, I mean RENDLER!
+[[./present-imgs/riddler.jpg]]
 ** A Framework that does something
+
 ** FrameworkMessages 
 *** Allows Executors and Schedulers to Communicate
 *** Only makes a best attempt at delivering the message
 
+#+BEGIN_SRC clojure
+  (clj-mesos.executor/send-framework-message driver
+                                             (.getBytes "A Message!"))
+#+END_SRC
+
+* Other Topics
+** High Availabilty Mode
+** Crash Recovery
+** Mesos State
 * What else is there?
 ** Use existing distributed applications
 *** [[https://github.com/mesos/storm][Storm]]
@@ -50,4 +123,12 @@ Think of something catchy
 *** [[https://github.com/mesosphere/cassandra-mesos][Cassandra]]
 *** [[http://spark.apache.org/docs/1.2.0/running-on-mesos.html][Spark]]
 *** [[https://github.com/mesos/hadoop][Hadoop]]
+** Manage Traditional Applications
+*** [[https://mesosphere.github.io/marathon/][Marathon]]
+*** [[http://airbnb.github.io/chronos/][Chronos]]
+* Similar to Mesos
+** [[http://deis.io/][Deis]]
+** [[https://flynn.io/][Flynn]]
+** [[https://coreos.com/][Fleet/CoreOS]]
+** [[http://eurosys2013.tudos.org/wp-content/uploads/2013/paper/Schwarzkopf.pdf][Google Omega]]
 
