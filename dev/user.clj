@@ -15,7 +15,9 @@
    [leiningen.uberjar :refer [uberjar]]
    [clojure.java.io :as io]
    [com.stuartsierra.component :as component]
-   [hello-mesos.system :as sys]))
+   [hello-mesos.system :as sys]
+   [cider.nrepl :as cider]
+   [clojure.tools.nrepl.server :as nrepl]))
 
 (defn load-project
   []
@@ -50,6 +52,14 @@
   #'system."
   []
   (alter-var-root #'system component/stop))
+
+(defn start-nrepl
+  "Starts the nrepl server"
+  ([]
+   (start-nrepl 8090))
+  ([port]
+   (nrepl/start-server :port port
+                       :handler cider/cider-nrepl-handler)))
 
 (defn go
   "Initializes and starts the system running."

@@ -7,6 +7,8 @@
                  [bdisraeli/clj-mesos "0.20.9-SNAPSHOT"]
                  [com.stuartsierra/component "0.2.2"]
                  [leiningen "2.5.1"]]
-  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.7"]]
+  :profiles {:dev {:dependencies [[org.clojure/tools.namespace "0.2.7"]
+                                  [cider/cider-nrepl "0.9.0"]
+                                  [org.clojure/tools.nrepl "0.2.10"]]
                    :source-paths ["dev"]}
              :user {:plugins [[cider/cider-nrepl "0.9.0-SNAPSHOT"]]}})
